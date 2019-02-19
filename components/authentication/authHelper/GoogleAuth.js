@@ -1,27 +1,22 @@
-/* eslint no-throw-literal: "off" */
-import { NetworkLayer } from 'app/utils';
-import { Settings } from 'app/config';
 import * as Expo from 'expo';
+import Settings from '../../../constants/Settings'
+import NetworkLayer from '../../../api/NetworkLayer'
+
 
 export default class GoogleAuth {
-  static googleLogin = async (loadingWheel, onSuccess) => {
-    const { isAndroid, buildType } = Settings;
+  static googleLogin = async (onSuccess) => {
+    const { isAndroid, buildType, google } = Settings;
     try {
       const result = await Expo.Google.logInAsync({
-        webClientId: Settings.google[Settings.buildType].webClientId,
+        webClientId: google[buildType].webClientId,
         clientId: isAndroid
-          ? Settings.google[Settings.buildType].webClientId
-          : Settings.google[buildType].iosClientId,
+          ? google[buildType].webClientId
+          : google[buildType].iosClientId,
         scopes: ['profile', 'email'],
       });
 
       if (result.type === 'success') {
         NetworkLayer.fetchAccessTokenFromCredentials(result.user.id, result.idToken, 'google').then(() => {
-          // Stop loading wheel
-          if (loadingWheel.stopLoading && typeof loadingWheel.stopLoading === 'function') {
-            loadingWheel.stopLoading();
-          }
-
           // Action to execute on success login
           if (onSuccess && typeof onSuccess === 'function') {
             onSuccess();
@@ -35,9 +30,7 @@ export default class GoogleAuth {
       }
     } catch (e) {
       // Stop loading wheel
-      if (loadingWheel.stopLoading && typeof loadingWheel.stopLoading === 'function') {
-        loadingWheel.stopLoading();
-      }
+
     }
   }
 }

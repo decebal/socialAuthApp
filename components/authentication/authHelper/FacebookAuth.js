@@ -1,22 +1,20 @@
-/* eslint no-throw-literal: "off" */
-/* eslint no-undef: "off" */
-import { NetworkLayer } from 'app/utils';
 import * as Expo from 'expo';
-import { Settings } from 'app/config';
+import Settings from '../../../constants/Settings'
+import NetworkLayer from '../../../api/NetworkLayer'
 
 export default class FacebookAuth {
   /**
   * Handle the facebook login
   *
-  * @param  {object} loadingWheel  loadingWheel reference
   * @param  {function} onSuccess  Action to apply on login success
   */
-  static facebookLogin = async (loadingWheel, onSuccess) => {
+  static facebookLogin = async (onSuccess) => {
+    const { isAndroid, buildType, facebook } = Settings;
     try {
       const {
         type,
         token,
-      } = await Expo.Facebook.logInWithReadPermissionsAsync(Settings.facebook.apid, {
+      } = await Expo.Facebook.logInWithReadPermissionsAsync(facebook[buildType], {
         permissions: ['public_profile'],
       });
 
@@ -26,11 +24,6 @@ export default class FacebookAuth {
         const userId = (await response.json()).id;
 
         NetworkLayer.fetchAccessTokenFromCredentials(userId, token, 'facebook').then(() => {
-          // Stop loading wheel
-          if (loadingWheel.stopLoading && typeof loadingWheel.stopLoading === 'function') {
-            loadingWheel.stopLoading();
-          }
-
           // Action to execute on success login
           if (onSuccess && typeof onSuccess === 'function') {
             onSuccess();
@@ -43,10 +36,7 @@ export default class FacebookAuth {
         };
       }
     } catch (e) {
-      // Stop loading wheel
-      if (loadingWheel.stopLoading && typeof loadingWheel.stopLoading === 'function') {
-        loadingWheel.stopLoading();
-      }
+      // do something useful such as e.g. Stop loading wheel
     }
   }
 }

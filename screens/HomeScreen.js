@@ -1,21 +1,37 @@
-import React from 'react';
+import React from 'react'
 import {
   Image,
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
+  Text, Touchable,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { WebBrowser } from 'expo';
+} from 'react-native'
+import {WebBrowser} from 'expo'
 
-import { MonoText } from '../components/StyledText';
+import {MonoText} from '../components/StyledText'
+import GoogleAuth from '../components/authentication/authHelper/GoogleAuth'
+import FacebookAuth from '../components/authentication/authHelper/FacebookAuth'
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
-  };
+  }
+
+  static propDefaults = {
+    onLoginSuccess: mess => console.log(mess)
+  }
+
+  facebookLogin = () => {
+    const {onLoginSuccess} = this.props
+    FacebookAuth.facebookLogin(onLoginSuccess)
+  }
+
+  googleLogin = () => {
+    const {onLoginSuccess} = this.props
+    GoogleAuth.googleLogin(onLoginSuccess)
+  }
 
   render() {
     return (
@@ -47,8 +63,11 @@ export default class HomeScreen extends React.Component {
           </View>
 
           <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
+            <TouchableOpacity onPress={this.facebookLogin} style={styles.helpLink}>
+              <Text style={styles.helpLinkText}>Continue with Facebook</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.googleLogin} style={styles.helpLink}>
+              <Text style={styles.helpLinkText}>Continue with Google</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -61,7 +80,7 @@ export default class HomeScreen extends React.Component {
           </View>
         </View>
       </View>
-    );
+    )
   }
 
   _maybeRenderDevelopmentModeWarning() {
@@ -70,32 +89,32 @@ export default class HomeScreen extends React.Component {
         <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
           Learn more
         </Text>
-      );
+      )
 
       return (
         <Text style={styles.developmentModeText}>
           Development mode is enabled, your app will be slower but you can use useful development
           tools. {learnMoreButton}
         </Text>
-      );
+      )
     } else {
       return (
         <Text style={styles.developmentModeText}>
           You are not in development mode, your app will run at full speed.
         </Text>
-      );
+      )
     }
   }
 
   _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
+    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode')
+  }
 
   _handleHelpPress = () => {
     WebBrowser.openBrowserAsync(
       'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
-  };
+    )
+  }
 }
 
 const styles = StyleSheet.create({
@@ -154,7 +173,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: 'black',
-        shadowOffset: { height: -3 },
+        shadowOffset: {height: -3},
         shadowOpacity: 0.1,
         shadowRadius: 3,
       },
@@ -185,4 +204,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },
-});
+})
