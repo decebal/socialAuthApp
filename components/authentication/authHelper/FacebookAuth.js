@@ -21,9 +21,17 @@ export default class FacebookAuth {
       if (type === 'success') {
         // Get the user's information from Facebook's Graph API
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-        const userId = (await response.json()).id;
+        const fbData = (await response.json());
+        const userId = fbData.id;
+        const userData = {
+          name: {
+            givenName: fbData.name.givenName,
+            familyName: fbData.name.familyName,
+          },
+          email: fbData.email,
+        };
 
-        NetworkLayer.fetchAccessTokenFromCredentials(userId, token, 'facebook').then(() => {
+        NetworkLayer.fetchAccessTokenFromCredentials({ publicId: userId, provider: 'facebook', userData }).then(() => {
           // Action to execute on success login
           if (onSuccess && typeof onSuccess === 'function') {
             onSuccess();

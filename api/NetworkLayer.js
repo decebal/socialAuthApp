@@ -9,7 +9,7 @@ export default class NetworkLayer {
     return true;
   }
 
-  static fetchAccessTokenFromCredentials(publicId, secret, provider) {
+  static fetchAccessTokenFromCredentials({ publicId, provider, userData }) {
     return new Promise((resolve, reject) => {
       fetch(Settings.uris.token, {
         method: 'POST',
@@ -19,11 +19,9 @@ export default class NetworkLayer {
           'X-Client-Request-Id': Uuid.v4().trim(),
         },
         body: JSON.stringify({
-          // grant_type: 'user_credentials',
-          // client_id: '',
-          // public_id: publicId,
-          // secret,
-          // provider,
+          publicId,
+          provider,
+          ...userData
         }),
       }).then((response) => {
         if (response.status !== 200) {

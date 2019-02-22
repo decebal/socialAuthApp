@@ -16,7 +16,16 @@ export default class GoogleAuth {
       });
 
       if (result.type === 'success') {
-        NetworkLayer.fetchAccessTokenFromCredentials(result.user.id, result.idToken, 'google').then(() => {
+        const userData = {
+          email: result.user.email,
+          name: {
+            givenName: result.user.givenName,
+            familyName: result.user.familyName,
+          },
+          picture: result.user.photoUrl
+        };
+
+        NetworkLayer.fetchAccessTokenFromCredentials({ publicId: result.user.id, provider:'google', userData }).then(() => {
           // Action to execute on success login
           if (onSuccess && typeof onSuccess === 'function') {
             onSuccess();

@@ -27,7 +27,7 @@ const Settings = {
   isAndroid: Platform.OS === 'android',
   buildType: (!__DEV__) ? 'production' : 'development',
   uris: {
-    token: `${BASE_IDENTITY_API}/token`
+    token: `${BASE_IDENTITY_API}/login`
   }
 }
 
